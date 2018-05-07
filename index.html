@@ -15,21 +15,24 @@
   <div class="container">
     <!-- div com a classe sprite -->
     <div class="sprite"></div>
-    <ul class="lacunas text-center"></ul>
+    <ul class="gaps text-center"></ul>
 
     <div class="text-center">
     <input id="entrada" 
       class="entrada"
-      autofocus>
+      placeholder="Palavra secreta" autofocus>
     </div>
   </div>
   <script src="js/jquery.min.js"></script>
   <script src="js/sprite.js"></script>
   <script src="js/jogo.js"></script>
+  <script src="js/controller.js"></script>
   <script>
-    var sprite = createSprite('.sprite');
-    var game = createGame(sprite);
-    createController(game);
+    createController(
+      createGame(
+        createSprite('.sprite')
+      )
+  ).start();
   </script>
 </body>
 </html>

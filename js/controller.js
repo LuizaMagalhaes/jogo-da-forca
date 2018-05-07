@@ -1,48 +1,74 @@
-function createController(game){
-  var $entrada = $('#entrada');
-  var $gaps = $('.gaps');
+const createController = game => {
+  const $entrada = $('.entrada');
+  const $gaps = $('.gaps');
   
-  function showGaps() {
+  const showGaps = () => {
     $gaps.empty();
     game.getGaps().forEach(function (gap) {
       $('<li>')
-      .addClass('gap')
-      .text(gap)
-      .appendTo($gaps);
+        .addClass('gap')
+        .text(gap)
+        .appendTo($gaps);
     });
   };
       
-  function changePlaceholder (text) {
-    $entrada.val('').attr('placeholder', text);
-  };
+  const changePlaceholder = text => $entrada.attr('placeholder', text);
     
-  function saveSecretWord () {
-    game.setSecretWord($entrada.val().trim());
-    $entrada.val('');
-    showGaps();
-    changePlaceholder('chute');
+  const saveSecretWord = () => {
+    try{
+      game.setSecretWord($entrada.val().trim());
+      $entrada.val('');
+      changePlaceholder('chuta');
+      showGaps();
+    }
+    catch(err) {
+      alert(err.message);
+    }
   };
   
-  function readAttempt() {
-    game.processAttempt($entrada.val().trim().substr(0, 1));
-    $entrada.val('');
-    showGaps();
-  }
+  const restart = () => {
+    game.restart();
+    $gaps.empty();
+    changePlaceholder('Palavra secreta');
+  };
+  
+  const readAttempt = () => {   
+    try{
+      game.processAttempt($entrada.val().trim().substr(0, 1));
+      $entrada.val('');
+      showGaps();
+    
+      if(game.winLose()) {
+        
+        setTimeout(() => {
+          if (game.win()) {
+            alert('Ganhou!');
+          } else if (game.lose()) {
+            alert('Uma pena, tente novamente.');
+          }
+          restart();
+        }, 200);
+      }
+    }
+    catch(err){
+      alert(err.message);
+    }   
+  };
 
-  function start () {
-    $entrada.keypress(function (event) {
+  const start = () => {
+    $entrada.keypress(event => {
       if (event.which == 13) {
         switch (game.getStep()) {
           case 1:
-            alert('etapa 1 - falta implementar');
+            saveSecretWord();
             break;
           case 2:
-            alert('etapa 2 - falta implementar');
+            readAttempt();
             break;
         }
       }
     });
-  }
+  };
    
-  return { start: start };
-}
+  return { start };
+};

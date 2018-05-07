@@ -1,72 +1,65 @@
-var game = createGame();
-function createGame(){
-  var step = 1;
-  var gaps = [];
-  var secretWord = "";
+const createGame = sprite => {
+  let secretWord = '';
+  let gaps = [];
+  let step = 1;
   
-  function criaLacunas() {
-    gaps = Array(secretWord.length).fill("");
-  };
-
-
-  function nextStep() {
-    etapa = 2;
-  };
-
-  function setSecretWord(word){
-    return secretWord;
-  }
-
-  function getGaps(){
-    return gaps;
-  }
-
-  function getStep(){
-    return step;
-  }
-
-  function processAttempt(attempt){
-    var exp = new RegExp("attempt", gi);
-    var result;
-    var right = false;
-
-    while (result = exp.exec(secretWord)) gaps[resul.index] = attempt;
-
-    if (!right) sprite.nextFrame();
-  }
-
-  function win(){
-    return gaps.length 
-    ? !gaps.some(function(gap) {
+  const win = () => gaps.length 
+    ? !gaps.some(function (gap) {
         return gap == '';
     })
     : false;
+  
+  const lose = () => sprite.isFinished();
 
-  }
-
-  function lose() {
-    return sprite.isFinished();
-  }
-
-  function winLose() {
-    return win() || lose();
-  }
-
-  function restart() {
+  const winLose = () => win() || lose();
+  
+  const restart = () => {
     step = 1;
     gaps = [];
+    secretWord = '';
     sprite.reset();
-  }
+  };
+  
+  const processAttempt = attempt => {
+    if (!attempt.trim()) throw Error('Chute inválido');
+    
+    const exp = new RegExp(attempt, 'gi');
+    let result, right = false;
+    
+    while (result = exp.exec(secretWord)){
+      right = gaps[result.index] = attempt;
+    }
+
+    if (!right) sprite.nextFrame();
+  };
+  
+  const createGaps = () => {
+    for (let i = 0; i < secretWord.length; i++) {
+      gaps.push('');
+    }
+  };
+  
+  const nextStep = () => step = 2;
+  
+  const setSecretWord = word => {
+    if (!word.trim()) throw Error('Palavra secreta inválida');
+    secretWord = word;
+    createGaps();
+    nextStep();
+  };
+  
+  const getGaps = () => gaps;
+  
+  const getStep = () => step;
 
   return { 
-    setSecretWord: setSecretWord,
-    getGaps: getGaps,
-    getStep: getStep,
-    processAttempt: processAttempt,
-    win: win,
-    lose: lose,
-    winLose: winLose,
-    restart: restart
-  }
-
-}
+    setSecretWord,
+    getGaps,
+    getStep,
+    processAttempt,
+    win,
+    lose,
+    winLose,
+    restart
+  };
+};
